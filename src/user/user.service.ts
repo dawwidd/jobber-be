@@ -1,6 +1,6 @@
-import { Body, ForbiddenException, Injectable } from '@nestjs/common';
+import { Body, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { CreateUserDto, User } from './user.model';
 import * as bcrypt from 'bcrypt'
 
@@ -10,6 +10,15 @@ export class UserService {
 
   getUsers() {
     return this.userModel.find();
+  }
+
+  async getById(userId: ObjectId) {
+    const user = await this.userModel.findById(userId);
+
+    if(user) {
+      return user;
+    }
+    throw new NotFoundException("User with given id does not exist");
   }
 
   async createUser(createUserDto: CreateUserDto) {

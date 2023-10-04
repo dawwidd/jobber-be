@@ -2,12 +2,15 @@ import * as mongoose from 'mongoose';
 
 export const UserSchema = new mongoose.Schema({
   email: String,
-  password: String
+  password: String,
+  activeApplications: Number
 });
 
 export interface User {
+  id: mongoose.ObjectId;
   email: string;
   password: string;
+  activeApplications: number;
 }
 
 export interface CreateUserDto {
