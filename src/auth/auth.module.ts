@@ -14,21 +14,29 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtRefreshTokenStrategy } from './jwt-refresh.strategy';
 
 @Module({
-  imports: [UserModule,
-    MongooseModule.forFeature([{name: 'user', schema: UserSchema}]), 
-    PassportModule.register({ defaultStrategy: 'jwt '}),
+  imports: [
+    UserModule,
+    MongooseModule.forFeature([{ name: 'user', schema: UserSchema }]),
+    PassportModule.register({ defaultStrategy: 'jwt ' }),
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get('JWT_EXPIRES_IN')
-        }
+          expiresIn: configService.get('JWT_EXPIRES_IN'),
+        },
       }),
       inject: [ConfigService],
-    })],
+    }),
+  ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtRefreshTokenStrategy, UserService, LocalStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtRefreshTokenStrategy,
+    UserService,
+    LocalStrategy,
+  ],
 })
 export class AuthModule {}

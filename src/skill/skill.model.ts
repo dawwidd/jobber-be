@@ -1,11 +1,11 @@
-import mongoose, { ObjectId } from "mongoose";
-import { User } from "src/user/user.model";
+import mongoose, { ObjectId } from 'mongoose';
+import { User } from 'src/user/user.model';
 
 export const SkillSchema = new mongoose.Schema({
   name: String,
   color: String,
   createdBy: mongoose.Types.ObjectId,
-  experienceYrs: Number
+  experienceYrs: Number,
 });
 
 export interface Skill {

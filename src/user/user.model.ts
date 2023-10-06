@@ -4,7 +4,7 @@ export const UserSchema = new mongoose.Schema({
   email: String,
   password: String,
   refreshToken: String,
-  activeApplications: Number
+  activeApplications: Number,
 });
 
 export interface User {

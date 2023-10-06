@@ -12,7 +12,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -20,13 +20,12 @@ export class AuthService {
       const user = await this.userService.findUserByEmail(email, true);
 
       if (!(user && (await bcrypt.compare(password, user.password)))) {
-        throw new BadRequestException("Invalid username or password");
+        throw new BadRequestException('Invalid username or password');
       }
       user.password = undefined;
       return user;
-    }
-    catch(err) {
-      throw new BadRequestException("Invalid username or password")
+    } catch (err) {
+      throw new BadRequestException('Invalid username or password');
     }
   }
 
@@ -42,9 +41,11 @@ export class AuthService {
     const payload: TokenPayload = { userId };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_EXPIRES_IN')
+      expiresIn: this.configService.get('JWT_EXPIRES_IN'),
     });
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_EXPIRES_IN')}`
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
+      'JWT_EXPIRES_IN',
+    )}`;
   }
 
   getCookieWithRefreshToken(userId: ObjectId) {
@@ -54,19 +55,19 @@ export class AuthService {
     const payload: TokenPayload = { userId };
     const token = this.jwtService.sign(payload, {
       secret,
-      expiresIn
+      expiresIn,
     });
     const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${expiresIn}`;
     return {
       cookie,
-      token
-    }
+      token,
+    };
   }
 
   public getCookiesForLogout() {
     return [
       'Authentication=; HttpOnly; Path=/; Max-Age=0',
-      'Refresh=; HttpOnly; Path=/; Max-Age=0'
+      'Refresh=; HttpOnly; Path=/; Max-Age=0',
     ];
   }
 }

@@ -7,13 +7,14 @@ import { User } from 'src/user/user.model';
 
 @Controller('application')
 export class ApplicationController {
-
   constructor(private readonly applicationService: ApplicationService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  addApplication(@Body() applicationCreateDto: ApplicationCreateDto, @ReqUser() user: User) {
+  addApplication(
+    @Body() applicationCreateDto: ApplicationCreateDto,
+    @ReqUser() user: User,
+  ) {
     return this.applicationService.addApplication();
   }
-
 }
