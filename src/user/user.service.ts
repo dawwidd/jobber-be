@@ -51,9 +51,34 @@ export class UserService {
     return true;
   }
 
-  async findUserByEmail(email: string) {
-    const user = await this.userModel.findOne({ email: email });
+  async findUserByEmail(email: string, withPassword: boolean = false) {
+    const user = withPassword ?
+                  await this.userModel.findOne({ email: email }) :
+                  await this.userModel.findOne({ email: email }).select('+password');
 
     return user;
+  }
+
+  async setRefreshToken(refreshToken: string, userId: ObjectId) {
+    const currentRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.userModel.updateOne({_id: userId}, { $set: { refreshToken: currentRefreshToken }})
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: ObjectId) {
+    const user = await this.getById(userId);
+    user.password = undefined;
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.refreshToken
+    );
+
+    if(isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(userId: ObjectId) {
+    return this.userModel.updateOne({ _id: userId }, { $unset: { refreshToken: "" } })
   }
 }

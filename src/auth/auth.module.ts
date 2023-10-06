@@ -11,6 +11,7 @@ import { UserSchema } from 'src/user/user.model';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtRefreshTokenStrategy } from './jwt-refresh.strategy';
 
 @Module({
   imports: [UserModule,
@@ -28,6 +29,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     })],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, UserService, LocalStrategy],
+  providers: [AuthService, JwtStrategy, JwtRefreshTokenStrategy, UserService, LocalStrategy],
 })
 export class AuthModule {}
