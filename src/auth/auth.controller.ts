@@ -9,12 +9,13 @@ import {
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
-import { CreateUserDto, UserLoginDto } from 'src/user/user.model';
+import { CreateUserDto, User } from 'src/user/user.model';
 import { LocalAuthGuard } from './guards/local.guard';
 import { Response } from 'express';
 import RequestWithUser from './request-with-user.interface';
 import { JwtAuthGuard } from './jwt.guard';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
+import { ReqUser } from 'src/user/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -30,8 +31,7 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@Req() request: RequestWithUser, @Res() response: Response) {
-    const { user } = request;
+  async login(@ReqUser() user: User, @Res() response: Response) {
     const accessTokenCookie = this.authService.getCookieWithJwtToken(user.id);
     const { cookie: refreshTokenCookie, token: refreshToken } =
       this.authService.getCookieWithRefreshToken(user.id);
@@ -45,16 +45,15 @@ export class AuthController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async authenticate(@Req() request: RequestWithUser) {
-    const user = request.user;
+  async authenticate(@ReqUser() user: User) {
     user.password = undefined;
     return user;
   }
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  async logout(@Req() request: RequestWithUser, @Res() res: Response) {
-    await this.userService.removeRefreshToken(request.user.id);
+  async logout(@ReqUser() user: User, @Res() res: Response) {
+    await this.userService.removeRefreshToken(user.id);
     res.setHeader('Set-Cookie', this.authService.getCookiesForLogout());
     return res.sendStatus(200);
   }

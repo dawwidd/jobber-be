@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { Skill } from './skill.model';
 import { SkillService } from './skill.service';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
-import RequestWithUser from 'src/auth/request-with-user.interface';
+import { ReqUser } from 'src/user/user.decorator';
+import { User } from 'src/user/user.model';
 
 @Controller('skill')
 export class SkillController {
@@ -10,15 +11,15 @@ export class SkillController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Req() request: RequestWithUser, @Body() skill: Skill) {
-    skill.createdBy = request.user.id;
+  async create(@ReqUser() user: User, @Body() skill: Skill) {
+    skill.createdBy = user.id;
     return this.skillService.create(skill);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAvailableToUser(@Req() request: RequestWithUser) {
-    const skills = this.skillService.findAvailableToUser(request.user.id);
+  async findAvailableToUser(@ReqUser() user: User) {
+    const skills = this.skillService.findAvailableToUser(user.id);
     return skills;
   }
 }

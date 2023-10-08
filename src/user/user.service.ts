@@ -8,6 +8,8 @@ import { Model, ObjectId } from 'mongoose';
 import { CreateUserDto, User } from './user.model';
 import * as bcrypt from 'bcrypt';
 import { Skill } from 'src/skill/skill.model';
+import { SetThresholdDto } from './dto/set-threshold.dto';
+import { DEFAULT_ACTIVE_APPLICATION_THRESHOLD } from './user.consts';
 
 @Injectable()
 export class UserService {
@@ -31,6 +33,7 @@ export class UserService {
 
     const newUser = new this.userModel({
       ...createUserDto,
+      activeApplicationsThreshold: DEFAULT_ACTIVE_APPLICATION_THRESHOLD,
       password: hashedPassword,
     });
 
@@ -100,6 +103,22 @@ export class UserService {
     return this.userModel.findByIdAndUpdate(
       userId,
       { $set: { skills: skills } },
+      { new: true },
+    );
+  }
+
+  async setActiveApplicationThreshold(
+    setThresholdDto: SetThresholdDto,
+    userId: ObjectId,
+  ) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          activeApplicationsThreshold:
+            setThresholdDto.activeApplicationsThreshold,
+        },
+      },
       { new: true },
     );
   }
