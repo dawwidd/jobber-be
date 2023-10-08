@@ -1,5 +1,4 @@
 import {
-  Body,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -8,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { CreateUserDto, User } from './user.model';
 import * as bcrypt from 'bcrypt';
+import { Skill } from 'src/skill/skill.model';
 
 @Injectable()
 export class UserService {
@@ -93,6 +93,14 @@ export class UserService {
     return this.userModel.updateOne(
       { _id: userId },
       { $unset: { refreshToken: '' } },
+    );
+  }
+
+  async setSkills(skills: Skill[], userId: ObjectId): Promise<User> {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $set: { skills: skills } },
+      { new: true },
     );
   }
 }

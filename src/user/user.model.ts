@@ -1,10 +1,12 @@
 import * as mongoose from 'mongoose';
+import { Skill, SkillSchema } from 'src/skill/skill.model';
 
 export const UserSchema = new mongoose.Schema({
   email: String,
   password: String,
   refreshToken: String,
-  activeApplications: Number,
+  activeApplicationsThreshold: Number,
+  skills: [SkillSchema],
 });
 
 export interface User {
@@ -12,7 +14,8 @@ export interface User {
   email: string;
   password: string;
   refreshToken: string;
-  activeApplications: number;
+  activeApplicationsThreshold: number;
+  skills: Skill[];
 }
 
 export interface CreateUserDto {
