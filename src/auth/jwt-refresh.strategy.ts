@@ -28,6 +28,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
   async validate(request: Request, payload: TokenPayload) {
     const refreshToken = request.cookies.Refresh;
+    console.log('siema');
     return this.userService.getUserIfRefreshTokenMatches(
       refreshToken,
       payload.userId,

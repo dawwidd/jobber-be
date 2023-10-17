@@ -1,33 +1,33 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { User } from './user.model';
 import { Skill } from 'src/skill/skill.model';
-import { ReqUser } from './user.decorator';
 import { SetThresholdDto } from './dto/set-threshold.dto';
+import { ObjectId } from 'mongoose';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post('skill')
+  @Post(':userId/skill')
   @UseGuards(JwtAuthGuard)
   async setSkills(
-    @ReqUser() user: User,
+    @Param() userId: ObjectId,
     @Body() skills: Skill[],
   ): Promise<User> {
-    return this.userService.setSkills(skills, user.id);
+    return this.userService.setSkills(skills, userId);
   }
 
-  @Post('threshold')
+  @Post(':userId/threshold')
   @UseGuards(JwtAuthGuard)
   async setActiveApplicationThreshold(
-    @ReqUser() user: User,
+    @Param() userId: ObjectId,
     @Body() setThresholdDto: SetThresholdDto,
   ) {
     return this.userService.setActiveApplicationThreshold(
       setThresholdDto,
-      user.id,
+      userId,
     );
   }
 }
