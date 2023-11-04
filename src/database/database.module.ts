@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { type } from 'os';
 
 @Module({
   imports: [
@@ -14,7 +13,9 @@ import { type } from 'os';
           configService.get('DB_USERNAME') +
           ':' +
           configService.get('DB_PASSWORD') +
-          '@localhost:' +
+          '@' +
+          configService.get('DB_HOSTNAME') +
+          ':' +
           configService.get('DB_PORT') +
           '/' +
           configService.get('DB_NAME'),
