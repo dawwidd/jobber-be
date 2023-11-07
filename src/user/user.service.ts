@@ -29,6 +29,14 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
+    if (
+      await this.userModel.findOne({
+        email: createUserDto.email,
+      })
+    ) {
+      throw new ForbiddenException('User with given email already exists');
+    }
+
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
     const newUser = new this.userModel({

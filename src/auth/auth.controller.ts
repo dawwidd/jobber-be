@@ -40,22 +40,28 @@ export class AuthController {
 
     response.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
     user.password = undefined;
-    return response.send(user);
+    return response.json({
+      status: 'success',
+      data: user,
+    });
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async authenticate(@ReqUser() user: User) {
+  async authenticate(@ReqUser() user: User, @Res() response: Response) {
     user.password = undefined;
-    return user;
+    return response.json({
+      status: 'success',
+      data: user,
+    });
   }
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  async logout(@ReqUser() user: User, @Res() res: Response) {
+  async logout(@ReqUser() user: User, @Res() response: Response) {
     await this.userService.removeRefreshToken(user.id);
-    res.setHeader('Set-Cookie', this.authService.getCookiesForLogout());
-    return res.sendStatus(200);
+    response.setHeader('Set-Cookie', this.authService.getCookiesForLogout());
+    return response.sendStatus(200);
   }
 
   @Get('refresh')
